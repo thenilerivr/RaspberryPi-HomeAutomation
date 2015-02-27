@@ -59,7 +59,7 @@ def gettemp(id):
     f = open('/sys/bus/w1/devices/' + id + '/' + filename, 'r')
     line = f.readline() # read 1st line
 	crc = line.rsplit(' ',1)
-    crc = crc[1].replace('\n', '')
+	crc = crc[1].replace('\n', '')
     if crc=='YES':
       line = f.readline() # read 2nd line
       mytemp = line.rsplit('t=',1)
