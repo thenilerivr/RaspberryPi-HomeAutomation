@@ -68,7 +68,7 @@ var svg = d3.select("#garage")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 // Get the data
-d3.json("tempdata.php", function(error, data) {
+d3.json("queryhometemp.php", function(error, data) {
     data.forEach(function(d) {
         d.timestamp = parseDate(d.timestamp);
         d.value = +d.value;

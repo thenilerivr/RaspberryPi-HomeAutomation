@@ -58,7 +58,7 @@ def gettemp(id):
     filename = 'w1_slave'
     f = open('/sys/bus/w1/devices/' + id + '/' + filename, 'r')
     line = f.readline() # read 1st line
-	    crc = line.rsplit(' ',1)
+	crc = line.rsplit(' ',1)
     crc = crc[1].replace('\n', '')
     if crc=='YES':
       line = f.readline() # read 2nd line
@@ -76,7 +76,7 @@ def gettemp(id):
 while (count < 5):
         tempc = gettemp(id)/float(1000)
         tempf = 9.0/5.0 * tempc + 32
-#        print "Temp : ",tempc,"C or ",tempf,"F"
+#       print "Temp : ",tempc,"C or ",tempf,"F"
         writeTemp(tempf)
         count = count + 1
         time.sleep(5)
