@@ -28,8 +28,8 @@ count = 0
 #inputs: temperature to write to database               #
 #-------------------------------------------------------#
 def writeTemp(temperature):
-        current_time = time.strftime("%H:%M:%S")
-        current_date = time.strftime("%Y/%m/%d")
+#        current_time = time.strftime("%H:%M:%S")
+#        current_date = time.strftime("%Y/%m/%d")
 
         #Connect to database
         conDB = mdb.connect(mysqlHost, mysqlUser, mysqlPass, mysqlDatabase, mysqlPort)
@@ -37,7 +37,7 @@ def writeTemp(temperature):
 
         #Write to database
         try:
-               cursor.execute("INSERT INTO tempdat VALUES (%s,%s,%s,%s)",(current_date,current_time,id,temperature))
+               cursor.execute("INSERT INTO tempdata(sensor,temperature) VALUES (%s,%s)",(id,temperature))
                conDB.commit()
         except:
                 print "Error writing to the database"
@@ -73,11 +73,11 @@ def gettemp(id):
     return 99999
 
 #Main execution
-while (count < 5000):
+while (count < 5):
         tempc = gettemp(id)/float(1000)
         tempf = 9.0/5.0 * tempc + 32
 #        print "Temp : ",tempc,"C or ",tempf,"F"
         writeTemp(tempf)
         count = count + 1
-        time.sleep(59)
+        time.sleep(5)
 
