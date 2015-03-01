@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Cubism.js</title>
+<style>
+
+@import url(//fonts.googleapis.com/css?family=Yanone+Kaffeesatz:400,700);
+@import url(style.css);
+
+#example1 { min-height: 155px; }
+#example2a { min-height: 153px; }
+#example2b { min-height: 255px; }
+
+</style>
+<div id="body">
+<a href="https://github.com/square"><img src="square.png" id="logo"></a>
+
+<h1>Cubism.js</h1>
+
+<h2>Time Series Visualization</h2>
+
+<div id="example1"></div>
+
+<p><aside>Mouseover or use the arrow keys to inspect values.<br><a href="./demo/" target="_blank">Open in a new window.</a></aside>
+
+<p style="margin-top:3em;"><b>Cubism.js</b> is a <a href="http://mbostock.github.com/d3/">D3</a> plugin for visualizing time series. Use Cubism to construct better realtime dashboards, pulling data from <a href="http://graphite.wikidot.com/">Graphite</a>, <a href="../cube/">Cube</a> and other sources. Cubism is available under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License</a> on <a href="https://github.com/square/cubism">GitHub</a>.
+
+<footer>
+  <span style="float:right;">
+    Released under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</a>.
+  </span>
+  Copyright 2012 <a href="http://squareup.com">Square, Inc.</a>
+</footer>
+</div>
+
+<a href="https://github.com/square/cubism"><img id="fork" src="github.png"></a>
+
+<script src="js/d3.js"></script>
+<script src="js/cubism.v1.js"></script>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+<script>
+
+function getTemp() {
+ 	
+        if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        } else {
+            // code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                document.getElementById("example1").innerHTML = xmlhttp.responseText;
+            }
+        }
+        xmlhttp.open("GET","getTemp.php",true);
+        xmlhttp.send();
+}
+
+function random(name) {
+  var value = 0,
+      values = [],
+      i = 0,
+      last;
+  return context.metric(function(start, stop, step, callback) {
+    start = +start, stop = +stop;
+    if (isNaN(last)) last = start;
+    while (last < stop) {
+      last += step;
+      value = Math.max(-10, Math.min(10, value + .8 * Math.random() - .4 + .2 * Math.cos(i += .2)));
+      values.push(value);
+    }
+    callback(null, values = values.slice((start - stop) / step));
+  }, name);
+}
+
+</script>
+<script>
+
+var context = cubism.context()
+    .serverDelay(0)
+    .clientDelay(0)
+    .step(1e3)
+    .size(960);
+
+var foo = getTemp();
+
+d3.select("#example1").call(function(div) {
+
+  div.append("div")
+      .attr("class", "axis")
+      .call(context.axis().orient("top"));
+
+  div.selectAll(".horizon")
+      .data([foo])
+    .enter().append("div")
+      .attr("class", "horizon")
+      .call(context.horizon().extent([-20, 20]));
+
+  div.append("div")
+      .attr("class", "rule")
+      .call(context.rule());
+
+});
+
+// On mousemove, reposition the chart values to match the rule.
+context.on("focus", function(i) {
+  d3.selectAll(".value").style("right", i == null ? null : context.size() - i + "px");
+});
+
+</script>
